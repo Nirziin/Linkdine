@@ -1,0 +1,44 @@
+#header{
+    /* Style pour le bandeau d'en-tête*/
+    color: white;
+    padding:7px;
+    background-color : #446AA9 ;
+    margin: 0 auto;
+}
+
+#navbar {
+    /* Style du bandeau de navigation */
+    margin-top : 10px;
+}
+
+#liste1 {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+#liste1 li {
+    float: left;
+    border-right: 1px solid #bbb;
+}
+
+
+#liste1 li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+#liste1 li a:hover {
+    background-color: #111;
+}
+footer{
+    /* Style du footer */
+    color : gray;
+    margin-top : 20px;
+    background-color: #333;
+}
