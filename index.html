@@ -1,20 +1,3 @@
-<?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "A CHANGER -------------------------";
-
-// Créer la connexion
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-$message_erreur = ""; // Initialisation du message d'erreur
-
-$id = $_POST['ID'];
-
-?>
-
-
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -37,6 +20,8 @@ $id = $_POST['ID'];
       <br><br>
       <input type="submit" value="Submit">
     </form>
+    <br>
+    <a href="register.html">Vous n'avez pas de compte?</a>
   </nav>
 </body>
 </html>
