@@ -15,8 +15,9 @@ if ($conn->connect_error) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
     $password = $_POST["password"];
+    $mail = $_POST["mail"];
 
-    $sql = "SELECT * FROM users WHERE username='$username'";
+    $sql = "SELECT * FROM users WHERE username='$username' AND mail='$mail'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -24,12 +25,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $row["password"])) {
             $_SESSION["user_id"] = $row["id"];
             $_SESSION["username"] = $row["username"];
-            header("Location: profile.php");
+            header("Location: accueil.html");
+            exit();
         } else {
-            echo "Invalid password.";
+            echo "Incorrect password.";
         }
     } else {
-        echo "No user found with that username.";
+        echo "No user found with the provided username and mail.";
     }
 }
 

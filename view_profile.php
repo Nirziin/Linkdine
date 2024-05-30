@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION["user_id"])) {
-    header("Location: login.html");
+    header("Location: index.html");
     exit();
 }
 
@@ -35,11 +35,11 @@ $conn->close();
 <!DOCTYPE html>
 <html>
 <head>
-    <title><?php echo $friend["full_name"]; ?>'s Profile</title>
+    <title><?php echo $friend["username"]; ?>'s Profile</title>
 </head>
 <body>
-    <h2><?php echo $friend["full_name"]; ?>'s Profile</h2>
-    <p>Username: <?php echo $friend["username"]; ?></p>
+    <h2><?php echo $friend["username"]; ?>'s Profile</h2>
+    <p>Nom: <?php echo $friend["nom"]; echo " "; echo $friend["prenom"]; ?></p>
     <p>Bio: <?php echo $friend["bio"]; ?></p>
     <a href="profile.php">Back to Profile</a>
 </body>
