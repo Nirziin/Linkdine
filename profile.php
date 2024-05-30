@@ -38,7 +38,7 @@ $result = $conn->query($sql);
         <?php
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
-                echo "<li><a href='view_profile.php?id=" . $row["id"] . "'>" . $row["full_name"] . "</a></li>";
+                echo "<li><a href='view_profile.php?id=" . $row["id"] . "'>" . $row["username"] . "</a></li>";
             }
         } else {
             echo "You have no friends.";
@@ -48,14 +48,14 @@ $result = $conn->query($sql);
     <h3>Friend Requests</h3>
     <ul>
         <?php
-        $sql_requests = "SELECT u.id, u.username, u.full_name FROM users u 
+        $sql_requests = "SELECT u.id, u.username FROM users u 
                          JOIN friend_requests fr ON u.id = fr.sender_id 
                          WHERE fr.receiver_id = $user_id AND fr.status = 'pending'";
         $result_requests = $conn->query($sql_requests);
 
         if ($result_requests->num_rows > 0) {
             while($row = $result_requests->fetch_assoc()) {
-                echo "<li>" . $row["full_name"] . " 
+                echo "<li>" . $row["username"] . " 
                       <a href='accept_request.php?id=" . $row["id"] . "'>Accept</a> 
                       <a href='decline_request.php?id=" . $row["id"] . "'>Decline</a></li>";
             }
