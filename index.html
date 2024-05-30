@@ -4,24 +4,21 @@
     <meta charset="UTF-8">
     <title>Index</title>
     <link rel="stylesheet" type="text/css" href="global.css">
-  <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="index.css">
 </head>
 <body>
-  <nav id="container">
-    <form method="post" action="">
-      Nom d'utilisateur:<br>
-      <input type="text" name="NomUtilisateur">
-      <br>
-      Adresse mail:<br>
-      <input type="text" name="email">
-      <br>
-      Mot de passe:<br>
-      <input type="password" name="mdp">
-      <br><br>
-      <input type="submit" value="Submit">
-    </form>
-    <br>
-    <a href="register.html">Vous n'avez pas de compte?</a>
-  </nav>
+    <nav id="container">
+        <form action="login.php" method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required><br>
+            <label for="mail">Mail:</label>
+            <input type="text" id="mail" name="mail" required><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br>
+            <input type="submit" value="Login">
+        </form>
+        <br>
+        <a href="register.html" styles="text-align: center;">Vous n'avez pas de compte?</a>
+    </nav>
 </body>
 </html>
