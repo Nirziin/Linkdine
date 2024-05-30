@@ -1,3 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #00004d;
+    color: #fff;
+    display: flex;
+    align-items: baseline;
+    height: 600vh;
+    margin: 0;
+    animation: Gradient 15s ease infinite;
+    background-size: 200% 200%;
+    background-position: center center;
+    background-image: linear-gradient(45deg, #222274, #4040a7, #5353bd, #4d4de0, #4444fc);
+    position: relative;
+}
+@keyframes Gradient {
+    0% {
+        background-position: 100% 0%;
+    }
+
+    50% {
+        background-position: 0% 100%;
+    }
+
+    100% {
+        background-position: 100% 0%;
+    }
+}
+
+.wrapper {
+    margin-left: 20%;
+    margin-right: 20%;
+    text-align: center;
+    border: outset  ;
+}
+
 #header{
     /* Style pour le bandeau d'en-tête*/
     color: white;
