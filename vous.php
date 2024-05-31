@@ -1,20 +1,20 @@
 <?php
 session_start();
 
-	if (!isset($_SESSION["user_id"])) {
-		header("Location: index.html");
-		exit();
-	}
+    if (!isset($_SESSION["user_id"])) {
+        header("Location: index.html");
+        exit();
+    }
 
-	$servername = "localhost";
-	$username = "root";
-	$password = "";
-	$dbname = "social_network";
-	$db_handle = mysqli_connect($servername, $username, $password );
-	$db_found = mysqli_select_db($db_handle, $dbname);
-	$user_id = $_SESSION["user_id"];
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "social_network";
+    $db_handle = mysqli_connect($servername, $username, $password );
+    $db_found = mysqli_select_db($db_handle, $dbname);
+    $user_id = $_SESSION["user_id"];
+
 ?>
-
 
 <!DOCTYPE html>
 <html lang="fr">
