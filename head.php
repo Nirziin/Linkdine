@@ -34,15 +34,15 @@
 <div id = "navbar">
 	<ul id="liste1">
 		<li id="accueil"><a href="accueil.php">Accueil</a></li>
-		<li id="reseau"><a href="reseau.html">Mon réseau</a></li>
-		<li id="vous"><a href="vous.html">Vous</a></li>
-		<li id="notifs"><a href="notifications.html">Notifications</a></li>
-		<li id="emploisnav"><a href="emplois.html">Emplois</a></li>
-		<li id="chat"><a href="chat.html">Messagerie</a></li>
+		<li id="reseau"><a href="reseau.php">Mon réseau</a></li>
+		<li id="vous"><a href="vous.php">Vous</a></li>
+		<li id="notifs"><a href="notifications.php">Notifications</a></li>
+		<li id="emploisnav"><a href="emplois.php">Emplois</a></li>
+		<li id="chat"><a href="chat.php">Messagerie</a></li>
 		<?php if ($user_role == 1): ?>
-		<li id="admin"><a href="admin.html">Admin</a></li>
+		<li id="admin"><a href="admin.php">Admin</a></li>
 		<?php else: ?>
-		<li id="auteur"><a href="auteur.html">Auteur</a></li>
+		<li id="auteur"><a href="auteur.php">Auteur</a></li>
 		<?php endif; ?>
 		<li id="deco" style="float:right"><a href="index.html">Deconnexion</a></li>
 	</ul>
