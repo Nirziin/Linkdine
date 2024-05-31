@@ -1,32 +1,33 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["user_id"])) {
-    header("Location: index.html");
-    exit();
-}
+	if (!isset($_SESSION["user_id"])) {
+		header("Location: index.html");
+		exit();
+	}
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "social_network";
+	$servername = "localhost";
+	$username = "root";
+	$password = "";
+	$dbname = "social_network";
+	$db_handle = mysqli_connect($servername, $username, $password );
+	$db_found = mysqli_select_db($db_handle, $dbname);
+	$user_id = $_SESSION["user_id"];
+	if($db_found)
+	{
+		$SQL = "SELECT * FROM evenements";
+		$result = mysqli_query($db_handle, $SQL);
+		while ($db_field = mysqli_fetch_assoc($result) ) {
+			$titre = $db_field['image'];
+			$images = $db_field['image'];
+			$user_role = $db_field['image'];
+			$user_role = $db_field['image'];
+		}
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-$user_id = $_SESSION["user_id"];
-
-// Requête SQL pour récupérer les amis de l'utilisateur
-$sql = "SELECT u.role FROM users u 
-        WHERE u.user_id = $user_id";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
+	}
+	else{
+		echo "Database pas trouvée";
+	}
 ?>
 
 <!DOCTYPE html>
