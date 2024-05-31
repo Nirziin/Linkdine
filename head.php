@@ -41,8 +41,6 @@
 		<li id="chat"><a href="chat.php">Messagerie</a></li>
 		<?php if ($user_role == 1): ?>
 		<li id="admin"><a href="admin.php">Admin</a></li>
-		<?php else: ?>
-		<li id="auteur"><a href="auteur.php">Auteur</a></li>
 		<?php endif; ?>
 		<li id="deco" style="float:right"><a href="index.html">Deconnexion</a></li>
 	</ul>
