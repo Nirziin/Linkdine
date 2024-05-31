@@ -35,9 +35,9 @@
 	<ul id="liste1">
 		<li id="accueil"><a href="accueil.php">Accueil</a></li>
 		<li id="reseau"><a href="reseau.html">Mon réseau</a></li>
-		<li id="vous"><a href="vous.html">Vous</a></li>
-		<li id="notifs"><a href="notifications.html">Notifications</a></li>
-		<li id="emploisnav"><a href="emplois.html">Emplois</a></li>
+		<li id="vous"><a href="vous.php">Vous</a></li>
+		<li id="notifs"><a href="notifications.php">Notifications</a></li>
+		<li id="emploisnav"><a href="emplois.php">Emplois</a></li>
 		<li id="chat"><a href="chat.html">Messagerie</a></li>
 		<?php if ($user_role == 1): ?>
 		<li id="admin"><a href="admin.html">Admin</a></li>
