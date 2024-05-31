@@ -34,7 +34,7 @@ session_start();
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>ECE-in</title>
+    <title>Admin :: ECE-in</title>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
@@ -47,45 +47,7 @@ session_start();
 		include 'head.php';
 	?>
         <div id = "section" style="border:solid">
-            <div id = "EventHebdo">
-                <h3 style="text-align: center; margin:3%; text-decoration:underline;">Evénement de la semaine :</h3>
-            </div>
-
-            <div id = "EventPerso">
-                <h3 style="text-align: center; margin:3%; text-decoration:underline;">Fil d'actualité :</h3>
-            </div>
-			<nav class = "post" style ="border: solid; border : outset; margin: 2px;">
-        <form method="post" action="">
-            <label for="ameliorer">Creer un post</label><br>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-7"><textarea name="write" id="write" cols = "50" rows = "10" wrap="hard" placeholder="Comment vous sentez vous aujourd'hui?" required></textarea></div>
-                    <div class="col-sm-5">
-                        <label for="image_uploads"><img src="Images\logoPhoto.jpg"  width="120" height="100" alt="Appareil photo . png"></label>
-                        <input type="file" id="image_uploads" name="image_uploads" accept=".jpg, .jpeg, .png" style="display:none">
-                        <button type="submit"  style = "margin-top : 10%; margin-left : 3%;">Publier</button>
-                        <fieldset>
-                            <p>A qui voulez vous le partager ?</p>
-
-                            <div>
-                                <input type="radio" id="friend" name="secu" value="Amis" checked>
-                            <label for="huey">Vos amis</label>
-                            </div>
-
-                            <div>
-                                <input type="radio" id="all" name="secu" value="tous">
-                                <label for="dewey">Tout le monde</label>
-                            </div>
-                        </fieldset>
-                    </div>
-                </div>
-            </div>
-            <label for="start">Quand ?</label>
-            <input type="datetime-local" id="date" name="date" value="2023-03-22" min="2015-01-01" max="2026-12-31" style = "text-align : left">
-            <label for="where"style = "margin-left : 10%;">Où ?</label>
-            <input type="text" id="lieu" name="lieu" style = "margin-left : 10%;">
-        </form>
-    </nav>
+            
         </div>
         <footer>
             <div class="container-fluid">
