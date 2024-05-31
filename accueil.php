@@ -54,7 +54,7 @@ session_start();
             <div id = "EventPerso">
                 <h3 style="text-align: center; margin:3%; text-decoration:underline;">Fil d'actualité :</h3>
             </div>
-			<nav class = "post" style =" border : solid outset;">
+			<nav class = "post" style ="border: solid; border : outset; margin: 2px;">
         <form method="post" action="">
             <label for="ameliorer">Creer un post</label><br>
             <div class="container-fluid">
