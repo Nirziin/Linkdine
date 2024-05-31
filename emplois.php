@@ -34,14 +34,33 @@ session_start();
     ?>
         <div class="container">
             <h2>Emplois disponibles</h2>
-            <div class="informations"> 
-                <div id = "dates">
-                    <p>18 mai</p>                
-                </div>
-                <div id = "annonce">
-                    <p>Bonjour, nous recherchons un neuille Bonjour, nous recherchons un neuille Bonjour, nous recherchons un neuille Bonjour, nous recherchons un neuille Bonjour, nous recherchons un neuille</p>
-                </div>
-            </div>
+            <?php
+            if ($db_found) {
+                $sql = "SELECT titre, entreprise, type, salaire, description FROM offres";
+                $result = mysqli_query($db_handle, $sql);
+
+                if (mysqli_num_rows($result) > 0) {
+                    while($row = mysqli_fetch_assoc($result)) {
+                        echo "<div class='informations'>";
+                        echo "<div id='annonce'>";
+                        echo "<h3>" . $row["titre"] . "</h3>";
+                        echo "<p>Entreprise : " . $row["entreprise"] . "</p>";
+                        echo "<p>Contrat : " . $row["type"] . "</p>";
+                        echo "<p>Salaire : " . $row["salaire"] . " €</p>";
+                        echo "<p>Description : " . $row["description"] . "</p>";
+                        echo "</div>";
+                        echo "</div>";
+                        echo "<hr>";
+                    }
+                } else {
+                    echo "<p>Aucune offre d'emploi disponible pour le moment.</p>";
+                }
+
+                mysqli_close($db_handle);
+            } else {
+                echo "<p>Erreur de connexion à la base de données.</p>";
+            }
+            ?>
         </div>
             
 
