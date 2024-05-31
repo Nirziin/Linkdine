@@ -1,3 +1,35 @@
+<?php
+session_start();
+
+	if (!isset($_SESSION["user_id"])) {
+		header("Location: index.html");
+		exit();
+	}
+
+	$servername = "localhost";
+	$username = "root";
+	$password = "";
+	$dbname = "social_network";
+	$db_handle = mysqli_connect($servername, $username, $password );
+	$db_found = mysqli_select_db($db_handle, $dbname);
+	$user_id = $_SESSION["user_id"];
+	if($db_found)
+	{
+		$SQL = "SELECT * FROM evenements";
+		$result = mysqli_query($db_handle, $SQL);
+		while ($db_field = mysqli_fetch_assoc($result) ) {
+			$titre = $db_field['image'];
+			$images = $db_field['image'];
+			$user_role = $db_field['image'];
+			$user_role = $db_field['image'];
+		}
+
+	}
+	else{
+		echo "Database pas trouvée";
+	}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -11,30 +43,9 @@
 </head>
 <body>
     <nav class = "wrapper">
-        <div id = "header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-8"><h3>ECE-in : Social Media Professionnel de l'ECE Paris</h3></div>
-                    <div class="col-sm" ><img src="ECELogo.png" width="121" height="49.5" alt="ECElogo"></div>
-                </div>
-            </div>
-        </div>
-        <div id = "navbar">
-            <ul id="liste1">
-                <li id="accueil"><a href="accueil.html">Accueil</a></li>
-                <li id="reseau"><a href="reseau.html">Mon réseau</a></li>
-                <li id="vous"><a href="vous.html">Vous</a></li>
-                <li id="notifs"><a href="notifications.html">Notifications</a></li>
-                <li id="emploisnav"><a href="emplois.html">Emplois</a></li>
-                <li id="chat"><a href="chat.html">Messagerie</a></li>
-                <?php if ($iduser == 1): ?>
-                <li id="admin"><a href="admin.html">Admin</a></li>
-                <?php else: ?>
-                <li id="auteur"><a href="auteur.html">Auteur</a></li>
-                <?php endif; ?>
-                <li id="deco" style="float:right"><a href="index.html">Deconnexion</a></li>
-            </ul>
-        </div>
+	<?php
+		include 'head.php';
+	?>
         <div id = "section" style="border:solid">
             <div id = "EventHebdo">
                 <h3 style="text-align: center; margin:3%; text-decoration:underline;">Evénement de la semaine :</h3>

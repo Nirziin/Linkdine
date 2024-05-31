@@ -11,30 +11,9 @@
 </head>
 <body>
   <nav class = "wrapper">
-    <div id = "header">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-sm-8"><h3>ECE-in : Social Media Professionnel de l'ECE Paris</h3></div>
-          <div class="col-sm" ><img src="ECELogo.png" width="121" height="49.5" alt="ECElogo"></div>
-        </div>
-      </div>
-    </div>
-    <div id = "navbar">
-      <ul id="liste1">
-        <li id="accueil"><a href="accueil.html">Accueil</a></li>
-        <li id="reseau"><a href="reseau.html">Mon réseau</a></li>
-        <li id="vous"><a href="vous.html">Vous</a></li>
-        <li id="notifs"><a href="notifications.html">Notifications</a></li>
-        <li id="emploisnav"><a href="emplois.html">Emplois</a></li>
-        <li id="chat"><a href="chat.html">Messagerie</a></li>
-        <?php if ($iduser == 1): ?>
-        <li id="admin"><a href="admin.html">Admin</a></li>
-        <?php else: ?>
-        <li id="auteur"><a href="auteur.html">Auteur</a></li>
-        <?php endif; ?>
-        <li id="deco" style="float:right"><a href="index.html">Deconnexion</a></li>
-      </ul>
-    </div>
+    <?php
+		include 'head.php';
+	?>
     <nav class="profil">
       <div class="row">
         <div class="col-sm-4">
@@ -96,7 +75,7 @@
     </nav>
     <br>
     <br>
-    <nav class="Ajout-formation" style="border : solid">
+    <nav class="Ajout-formation" style="border : solid grey 1px">
       <h1 style="margin-top : 5% ">Ajouter une formation</h1>
       <form method="post" action="">
         <div class="row">
@@ -120,7 +99,7 @@
         <button type="submit" name="ajouterForm" value="CreerForm" style=" margin-top : 2%;">Publier</button>
       </form>
     </nav>
-    <nav class="Ajout-projet" style="border : solid">
+    <nav class="Ajout-projet" style="border : solid grey 1px">
       <h1 style="margin-top : 5% "> Ajouter un projet</h1>
       <form method="post" action="">
 
