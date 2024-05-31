@@ -1,3 +1,28 @@
+<?php
+	if (!isset($_SESSION["user_id"])) {
+		header("Location: index.html");
+		exit();
+	}
+
+	$servername = "localhost";
+	$username = "root";
+	$password = "";
+	$dbname = "social_network";
+	$db_handle = mysqli_connect($servername, $username, $password );
+	$db_found = mysqli_select_db($db_handle, $dbname);
+	$user_id = $_SESSION["user_id"];
+	if($db_found)
+	{
+		$SQL = "SELECT role FROM users WHERE ID = $user_id";
+		$result = mysqli_query($db_handle, $SQL);
+		$db_field = mysqli_fetch_assoc($result);
+		$user_role = $db_field['role'];
+	}
+	else{
+		echo "Database pas trouvée";
+	}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
