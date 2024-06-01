@@ -1,20 +1,57 @@
 <?php
 session_start();
 
-	if (!isset($_SESSION["user_id"])) {
-		header("Location: index.html");
-		exit();
-	}
+if (!isset($_SESSION["user_id"])) {
+    header("Location: index.html");
+    exit();
+}
 
-	$servername = "localhost";
-	$username = "root";
-	$password = "";
-	$dbname = "social_network";
-	$db_handle = mysqli_connect($servername, $username, $password );
-	$db_found = mysqli_select_db($db_handle, $dbname);
-	$user_id = $_SESSION["user_id"];
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "social_network";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$user_id = $_SESSION["user_id"];
+
+// Récupérer les informations de l'utilisateur
+$sql = "SELECT nom, prenom, bio, image FROM users WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$stmt->bind_result($nom, $prenom, $bio, $image);
+$stmt->fetch();
+$stmt->close();
+
+// Vérifier et traiter le formulaire de téléchargement de l'image
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["image_uploads"])) {
+    $imageData = file_get_contents($_FILES["image_uploads"]["tmp_name"]);
+    $imageType = mime_content_type($_FILES["image_uploads"]["tmp_name"]);
+
+    // Vérifier si le fichier est une image
+    if (strpos($imageType, 'image') !== false) {
+        $sql = "UPDATE users SET image = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("bi", $null, $user_id);
+        $stmt->send_long_data(0, $imageData);
+        if ($stmt->execute()) {
+            //echo "Image successfully updated.";
+        } else {
+            echo "Error updating image.";
+        }
+        $stmt->close();
+    } else {
+        echo "File is not an image.";
+    }
+}
+
+$conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -28,32 +65,30 @@ session_start();
   <link rel="stylesheet" type="text/css" href="css/vous.css">
 </head>
 <body>
-  <nav class = "wrapper">
-    <?php
-		include 'head.php';
-	?>
+  <nav class="wrapper">
+    <?php include 'head.php'; ?>
     <nav class="profil">
       <div class="row">
         <div class="col-sm-4">
-          <img src="" alt="Sa photo de profil">
+          <?php
+          if (!empty($image)) {
+              echo '<img src="data:image/jpeg;base64,' . base64_encode($image) . '" alt="Sa photo de profil" width="200">';
+          } else {
+              echo '<img src="default-profile.png" alt="Sa photo de profil" width="200">';
+          }
+          ?>
           <form method="post" action="" enctype="multipart/form-data">
               <input type="file" id="image_uploads" name="image_uploads" accept=".jpg, .jpeg, .png" onchange="previewImage();" style="display:none">
-              <button type="submit" id="publish_button">Changer de Photo</button>
+              <button type="button" onclick="document.getElementById('image_uploads').click();">Choisir une photo</button>
+              <button type="submit" id="publish_button">Valider</button>
           </form>
         </div>
         <div class="col-sm-8">
           <div style="background-color: #d6a3b7; margin:2%">
-            <h1>
-             BARRIERE Romain
-            </h1>
-            <h3>
-              Etudiant
-            </h3>
+            <h1><?php echo htmlspecialchars($prenom) . " " . htmlspecialchars($nom); ?></h1>
           </div>
           <div style="background-color: #a7d4d4; margin:2%">
-            <h3>
-              J'aime bien céleste et les jeux videos.
-            </h3>
+            <h3><?php echo nl2br(htmlspecialchars($bio)); ?></h3>
           </div>
         </div>
       </div>
@@ -133,17 +168,17 @@ session_start();
     <footer>
       <div class="container-fluid">
         <div class="row">
-          <div class="col-sm-6" style = "border : solid black; padding:2px">
-            <p style = "margin-top:10%;">
+          <div class="col-sm-6" style="border: solid black; padding:2px">
+            <p style="margin-top:10%;">
               Bienvenue sur Link dine, le plus grand réseau professionnel mondial comptant plus de 2 utilisateurs dans plus de 0 pays et territoires du monde.
             </p>
           </div>
-          <div class="col-sm-6" style = "border : solid black; padding:2px">
-            <p style="text-align : center;">Nous contacter</p>
+          <div class="col-sm-6" style="border: solid black; padding:2px">
+            <p style="text-align: center;">Nous contacter</p>
 
             <a href="mailto:romain.barriere@edu.ece.fr"> Mail </a>
             <br>
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2625.3661096301935!2d2.2859856116549255!3d48.851228701091536!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e6701b4f58251b%3A0x167f5a60fb94aa76!2sECE%20-%20Ecole%20d&#39;ing%C3%A9nieurs%20-%20Engineering%20school.!5e0!3m2!1sfr!2sfr!4v1685461093343!5m2!1sfr!2sfr" width="100" height="100" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2625.3661096301935!2d2.2859856116549255!3d48.851228701091536!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e6701b4f58251b%3A0x167f5a60fb94aa76!2sECE%20-%20Ecole%20d&#39;ing%C3%A9nieurs%20-%20Engineering%20school.!5e0!3m2!1sfr!2sfr" width="100" height="100" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
         </div>
       </div>
