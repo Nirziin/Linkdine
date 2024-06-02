@@ -22,7 +22,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-
 // Récupérer les informations de l'utilisateur
 $sql = "SELECT nom, prenom, bio, image, couleur FROM users WHERE id = ?";
 $stmt = $conn->prepare($sql);
@@ -89,10 +88,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["drone"])) {
     $stmt->close();
 }
 
+// Vérifier et traiter le formulaire de modification de la bio
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["modifierBio"])) {
+    $newBio = $_POST["bio"];
 
+    $sql = "UPDATE users SET bio = ? WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("si", $newBio, $user_id);
+    
+    if ($stmt->execute()) {
+        $bio = $newBio;
+        // Afficher un message de succès ou effectuer d'autres actions si nécessaire
+    } else {
+        // Gérer les erreurs de mise à jour de la base de données
+        echo "Error updating bio.";
+    }
+    $stmt->close();
+}
 
 $conn->close();
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -108,7 +125,23 @@ $conn->close();
         body {
             background-image: <?php echo htmlspecialchars($background_color); ?> !important;
         }
+        /* Masquer le formulaire de modification de la bio par défaut */
+        #bioForm {
+            display: none;
+            background-color: #b3b3b3;
+        }
     </style>
+    <script>
+        // Fonction pour afficher ou masquer le formulaire de modification de la bio
+        function toggleBioForm() {
+            var bioForm = document.getElementById("bioForm");
+            if (bioForm.style.display === "none") {
+                bioForm.style.display = "block";
+            } else {
+                bioForm.style.display = "none";
+            }
+        }
+    </script>
 </head>
 <body>
     <nav class="wrapper">
@@ -137,6 +170,15 @@ $conn->close();
                     </div>
                     <div style="background-color: #D3D3D3; margin:2%; color: black; border-radius:5px; border:solid 1px">
                         <h4><?php echo nl2br(htmlspecialchars($bio)); ?></h4>
+                        <!-- Formulaire de modification de la bio -->
+                        <form id="bioForm" method="post" action="" style="display: none;">
+                            <label for="bio">Modifier la bio :</label><br>
+                            <textarea id="bio" name="bio" rows="3" cols="50" style="font-size: 14px;"><?php echo htmlspecialchars($bio); ?></textarea><br>
+                            <button type="submit" name="modifierBio">Enregistrer</button>
+                        </form>
+                        <!-- Bouton pour afficher le formulaire de modification de la bio -->
+                        <button id="editBioBtn" onclick="toggleBioForm()">Modifier la bio</button>
+                        <!-- Fin du formulaire de modification de la bio -->
                     </div>
                 </div>
             </div>
