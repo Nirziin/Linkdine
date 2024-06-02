@@ -1,19 +1,34 @@
 <?php
 session_start();
 
-    if (!isset($_SESSION["user_id"])) {
-        header("Location: index.html");
-        exit();
-    }
+if (!isset($_SESSION["user_id"])) {
+    header("Location: index.html");
+    exit();
+}
 
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "social_network";
-    $db_handle = mysqli_connect($servername, $username, $password );
-    $db_found = mysqli_select_db($db_handle, $dbname);
-    $user_id = $_SESSION["user_id"];
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "social_network";
+$db_handle = mysqli_connect($servername, $username, $password);
+$db_found = mysqli_select_db($db_handle, $dbname);
+$user_id = $_SESSION["user_id"];
 
+// Vérifier si la connexion à la base de données est établie
+if (!$db_found) {
+    die("Impossible de se connecter à la base de données: " . mysqli_connect_error());
+}
+
+// Requête SQL pour récupérer les publications non vues
+$sql_publications = "SELECT p.*, u.username FROM publications p JOIN users u ON p.userID = u.id WHERE p.userID != $user_id AND p.date >= ALL (SELECT date FROM publications WHERE userID = $user_id) AND p.date <= NOW()";
+$result_publications = mysqli_query($db_handle, $sql_publications);
+
+// Requête SQL pour récupérer les événements non vus
+$sql_events = "SELECT e.*, u.username FROM events e JOIN users u ON e.user_id = u.id WHERE e.user_id != $user_id AND e.start_date >= ALL (SELECT start_date FROM events WHERE user_id = $user_id)";
+$result_events = mysqli_query($db_handle, $sql_events);
+
+// Fermer la connexion à la base de données
+mysqli_close($db_handle);
 ?>
 
 <!DOCTYPE html>
@@ -26,26 +41,67 @@ session_start();
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="emplois.css">
     <link rel="stylesheet" type="text/css" href="global.css">
+    <style>
+        .publication {
+            margin-bottom: 20px;
+        }
+        .publication .description {
+            max-height: 50px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .publication .description.expanded {
+            max-height: none;
+        }
+        .read-more {
+            cursor: pointer;
+            color: blue;
+        }
+    </style>
+    <script>
+        $(document).ready(function(){
+            $(".read-more").click(function(){
+                $(this).prev().toggleClass("expanded");
+                $(this).text($(this).text() == 'Voir moins' ? 'Voir plus' : 'Voir moins');
+            });
+        });
+    </script>
 </head>
 <body>
-    <nav class = "wrapper">
-        <?php
-        include 'head.php';
-    ?>
+    <nav class="wrapper">
+        <?php include 'head.php'; ?>
         <div class="container">
             <h2>Centre de notifications</h2>
-            <div class="informations"> 
-                <div id = "dates">
-                    <p>1^0 savril 2001</p>                
-                </div>
-                <div id = "annonce">
-                    <p>Bonjour, l'objetcif princpal est de monter son arche jusqu'au niveau 80 afin de pouvoir prendre ensuite des places à 1.9 pour avoir enormément de plans, de médailles et de pfs(si vous snippez biensur ^^) ensuite vous pourrez continuer à monter votre arche au dela du niveau 80 pour augmenter votre bonus de recompenses lorsque vous vous posistionnez sur un gm d'un autre joueur, le taux maximum supplémentaire accordé par l'arche est de 2 et est atteint au niveau 180, autant vous dire que vous n'y etes pas arrivé ^^^^^^</p>
-                </div>
-            </div>
+            <?php
+            // Afficher les publications non vues
+            if (mysqli_num_rows($result_publications) > 0) {
+                while ($row = mysqli_fetch_assoc($result_publications)) {
+                    echo '<div class="publication">';
+                    echo '<p><strong>' . htmlspecialchars($row["username"]) . '</strong></p>';
+                    echo '<div class="description">' . htmlspecialchars($row["description"]) . '</div>';
+                    if (strlen($row["description"]) > 50) {
+                        echo '<p class="read-more">Voir plus</p>';
+                    }
+                    echo '<p>Posté le: ' . htmlspecialchars($row["date"]) . '</p>';
+                    echo '</div>';
+                }
+            }
+            // Afficher les événements non vus
+            if (mysqli_num_rows($result_events) > 0) {
+                while ($row = mysqli_fetch_assoc($result_events)) {
+                    echo '<div class="publication">';
+                    echo '<p><strong>' . htmlspecialchars($row["username"]) . '</strong></p>';
+                    echo '<div class="description">' . htmlspecialchars($row["name"]) . '</div>';
+                    if (strlen($row["name"]) > 50) {
+                        echo '<p class="read-more">Voir plus</p>';
+                    }
+                    echo '<p>Début: ' . htmlspecialchars($row["start_date"]) . '</p>';
+                    echo '<p>Fin: ' . htmlspecialchars($row["end_date"]) . '</p>';
+                    echo '</div>';
+                }
+            }
+            ?>
         </div>
-            
-
-
         <footer>
             <div class="container-fluid">
                 <div class="row">
@@ -56,7 +112,6 @@ session_start();
                     </div>
                     <div class="col-sm-6" style = "border : solid black; padding:2px">
                         <p style="text-align : center;">Nous contacter</p>
-
                         <a href="mailto:romain.barriere@edu.ece.fr"> Mail </a>
                         <br>
                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2625.3661096301935!2d2.2859856116549255!3d48.851228701091536!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e6701b4f58251b%3A0x167f5a60fb94aa76!2sECE%20-%20Ecole%20d&#39;ing%C3%A9nieurs%20-%20Engineering%20school.!5e0!3m2!1sfr!2sfr!4v1685461093343!5m2!1sfr!2sfr" width="100" height="100" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>

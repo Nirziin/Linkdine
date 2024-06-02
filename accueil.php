@@ -10,54 +10,70 @@ $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "social_network";
-$db_handle = mysqli_connect($servername, $username, $password);
-$db_found = mysqli_select_db($db_handle, $dbname);
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
 $user_id = $_SESSION["user_id"];
 
-if (!$db_handle) {
-    die("Connexion échouée : " . mysqli_connect_error());
-}
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['write'])) {
+    $content = $conn->real_escape_string($_POST['write']);
+    $date = $conn->real_escape_string($_POST['date']);
+    $visibility = $conn->real_escape_string($_POST['visibility']);
+    $type = 0; // Vous pouvez changer cela si nécessaire
+    $likes = 0;
 
-// Fonction pour récupérer les événements
-function getEvents($db_handle) {
-    $sql = "SELECT * FROM evenements";
-    $result = mysqli_query($db_handle, $sql);
-    return $result;
-}
-
-// Fonction pour récupérer les publications des amis avec le nom d'utilisateur
-function getFriendsPublications($db_handle, $user_id) {
-    $sql = "SELECT publications.*, users.username 
-            FROM publications 
-            JOIN friends ON publications.userID = friends.friend_id 
-            JOIN users ON publications.userID = users.id
-            WHERE friends.user_id = $user_id 
-            ORDER BY publications.date DESC";
-    $result = mysqli_query($db_handle, $sql);
-    return $result;
-}
-
-// Ajouter une nouvelle publication
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $description = mysqli_real_escape_string($db_handle, $_POST['write']);
-    $date = date("Y-m-d H:i:s");
-    $user_id = $_SESSION['user_id'];
-    $image = ''; // Ajoute le code nécessaire si l'image est aussi incluse dans le form
-
-    $sql = "INSERT INTO publications (type, date, description, image, likes, userID) 
-            VALUES (0, '$date', '$description', '$image', 0, $user_id)";
-
-    if (mysqli_query($db_handle, $sql)) {
-        echo "Nouvelle publication ajoutée avec succès";
-    } else {
-        echo "Erreur : " . $sql . "<br>" . mysqli_error($db_handle);
+    $current_date = date("Y-m-d\TH:i");
+    if ($date < $current_date) {
+        $date = $current_date;
     }
+
+    $image = "";
+    if (isset($_FILES['image_uploads']) && $_FILES['image_uploads']['size'] > 0) {
+        $image = file_get_contents($_FILES['image_uploads']['tmp_name']);
+    }
+
+    $stmt = $conn->prepare("INSERT INTO publications (type, date, description, image, likes, userID, visibility) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("isssiis", $type, $date, $content, $image, $likes, $user_id, $visibility);
+
+    if ($stmt->execute()) {
+        // Redirection après la création de la publication pour éviter la duplication
+        header("Location: accueil.php");
+        exit();
+    } else {
+        echo "Erreur: " . $stmt->error;
+    }
+
+    $stmt->close();
 }
 
-$events = getEvents($db_handle);
-$friendsPublications = getFriendsPublications($db_handle, $user_id);
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['event_name'])) {
+    $event_name = $conn->real_escape_string($_POST['event_name']);
+    $event_description = $conn->real_escape_string($_POST['event_description']);
+    $event_start_date = $conn->real_escape_string($_POST['event_start_date']);
+    $event_end_date = $conn->real_escape_string($_POST['event_end_date']);
 
-mysqli_close($db_handle);
+    $current_date = date("Y-m-d\TH:i");
+    if ($event_start_date < $current_date) {
+        $event_start_date = $current_date;
+    }
+
+    $stmt = $conn->prepare("INSERT INTO events (name, description, start_date, end_date, user_id) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssi", $event_name, $event_description, $event_start_date, $event_end_date, $user_id);
+
+    if ($stmt->execute()) {
+        // Redirection après la création de l'événement pour éviter la duplication
+        header("Location: accueil.php");
+        exit();
+    } else {
+        echo "Erreur: " . $stmt->error;
+    }
+
+    $stmt->close();
+}
 ?>
 
 <!DOCTYPE html>
@@ -65,93 +81,137 @@ mysqli_close($db_handle);
 <head>
     <meta charset="UTF-8">
     <title>ECE-in</title>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="CSSaccueil.css">
     <link rel="stylesheet" type="text/css" href="global.css">
 </head>
 <body>
     <nav class="wrapper">
-    <?php include 'head.php'; ?>
+        <?php include 'head.php'; ?>
         <div id="section" style="border:solid">
             <div id="EventHebdo">
                 <h3 style="text-align: center; margin:3%; text-decoration:underline;">Evénement de la semaine :</h3>
                 <?php
-                if (mysqli_num_rows($events) > 0) {
-                    while($event = mysqli_fetch_assoc($events)) {
-                        echo "<div class='evenement'>";
-                        echo "<img src='" . $event["image"] . "' alt='" . $event["titre"] . "' style='width:100px;height:100px;'>";
-                        echo "<h4>" . $event["titre"] . " à " . $event["lieu"] . " le " . $event["date"] . " à " . $event["heure"] . ": </h4>";
-                        echo "<p>" . $event["description"] . "</p>";
-                        echo "</div><hr>";
-                    }
-                } else {
-                    echo "<p>Aucun événement trouvé.</p>";
-                }
-                ?>
-            </div>
+                $events_query = "
+                    SELECT e.*, u.username
+                    FROM events e
+                    JOIN users u ON e.user_id = u.id
+                    WHERE e.start_date <= DATE_ADD(NOW(), INTERVAL 7 DAY) AND e.end_date >= NOW()
+                    ORDER BY e.start_date ASC";
 
+                $stmt = $conn->prepare($events_query);
+                $stmt->execute();
+                $events = $stmt->get_result();
+                $stmt->close();
+                ?>
+                <?php if ($events->num_rows > 0): ?>
+                    <?php while($event = $events->fetch_assoc()): ?>
+                        <div class="event">
+                            <p><strong><?php echo htmlspecialchars($event['username']); ?></strong></p>
+                            <p><?php echo htmlspecialchars($event['name']); ?></p>
+                            <p><?php echo htmlspecialchars($event['description']); ?></p>
+                            <p>Début: <?php echo htmlspecialchars($event['start_date']); ?></p>
+                            <p>Fin: <?php echo htmlspecialchars($event['end_date']); ?></p>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <p>Aucun événement trouvé.</p>
+                <?php endif; ?>
+            </div>
             <div id="EventPerso">
                 <h3 style="text-align: center; margin:3%; text-decoration:underline;">Fil d'actualité :</h3>
-                <?php
-                if (mysqli_num_rows($friendsPublications) > 0) {
-                    while($publication = mysqli_fetch_assoc($friendsPublications)) {
-                        echo "<div class='publication'>";
-                        echo "<p>Le " . $publication["date"] . ", " . $publication["username"] . " a publié : </p>";
-                        echo "<p>" . $publication["description"] . "</p>";
-                        echo "</div><hr>";
-                    }
-                } else {
-                    echo "<p>Aucune publication trouvée.</p>";
-                }
-                ?>
-            </div>
+                <div id="publications">
+                    <?php
+                    $publications_query = "
+                        SELECT p.*, u.username
+                        FROM publications p
+                        LEFT JOIN friends f ON p.userID = f.friend_id
+                        JOIN users u ON p.userID = u.id
+                        WHERE ((p.visibility = 'public' AND p.userID != ?) OR (p.visibility = 'friends' AND f.user_id = ?))
+                        AND p.date <= NOW()
+                        ORDER BY p.date DESC";
 
+                    $stmt = $conn->prepare($publications_query);
+                    $stmt->bind_param("ii", $user_id, $user_id);
+                    $stmt->execute();
+                    $publications = $stmt->get_result();
+                    $stmt->close();
+                    $conn->close();
+                    ?>
+                    <?php if ($publications->num_rows > 0): ?>
+                        <?php while($publication = $publications->fetch_assoc()): ?>
+                            <div class="publication">
+                                <p><strong><?php echo htmlspecialchars($publication['username']); ?></strong></p>
+                                <p><?php echo htmlspecialchars($publication['description']); ?></p>
+                                <?php if ($publication['image']): ?>
+                                    <img src="data:image/jpeg;base64,<?php echo base64_encode($publication['image']); ?>" alt="Publication Image" width="200">
+                                <?php endif; ?>
+                                <p>Posté le: <?php echo htmlspecialchars($publication['date']); ?></p>
+                            </div>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <p>Aucune publication trouvée.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
             <nav class="post" style="border: solid; border: outset; margin: 2px;">
-                <form method="post" action="accueil.php">
-                    <label for="write">Créer un post</label><br>
+                <form method="post" action="accueil.php" enctype="multipart/form-data">
+                    <label for="ameliorer">Créer un post</label><br>
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-sm-7">
-                                <textarea name="write" id="write" cols="50" rows="10" wrap="hard" placeholder="Comment vous sentez-vous aujourd'hui?" required></textarea>
+                                <textarea name="write" id="write" cols="50" rows="10" wrap="hard" placeholder="Comment vous sentez vous aujourd'hui?" required></textarea>
                             </div>
                             <div class="col-sm-5">
                                 <label for="image_uploads"><img src="Images/logoPhoto.jpg" width="120" height="100" alt="Appareil photo"></label>
                                 <input type="file" id="image_uploads" name="image_uploads" accept=".jpg, .jpeg, .png" style="display:none">
                                 <button type="submit" style="margin-top: 10%; margin-left: 3%;">Publier</button>
-                                <fieldset>
-                                    <p>A qui voulez-vous le partager ?</p>
-                                    <div>
-                                        <input type="radio" id="friend" name="secu" value="Amis" checked>
-                                        <label for="friend">Vos amis</label>
-                                    </div>
-                                    <div>
-                                        <input type="radio" id="all" name="secu" value="tous">
-                                        <label for="all">Tout le monde</label>
-                                    </div>
-                                </fieldset>
                             </div>
                         </div>
                     </div>
                     <label for="start">Quand ?</label>
-                    <input type="datetime-local" id="date" name="date" value="2023-03-22" min="2015-01-01" max="2026-12-31" style="text-align: left">
-                    <label for="where" style="margin-left: 10%;">Où ?</label>
-                    <input type="text" id="lieu" name="lieu" style="margin-left: 10%;">
+                    <input type="datetime-local" id="date" name="date" value="<?php echo date('Y-m-d\TH:i'); ?>" min="<?php echo date('Y-m-d\TH:i'); ?>" style="text-align: left">
+                    <label for="visibility">Visibilité :</label>
+                    <select id="visibility" name="visibility">
+                        <option value="public">Tout le monde</option>
+                        <option value="friends">Amis uniquement</option>
+                    </select>
+                </form>
+            </nav>
+            <nav class="post" style="border: solid; border: outset; margin: 2px;">
+                <form method="post" action="accueil.php" enctype="multipart/form-data">
+                    <label for="event_name">Créer un événement</label><br>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-7">
+                                <input type="text" name="event_name" id="event_name" placeholder="Nom de l'événement" required><br>
+                                <textarea name="event_description" id="event_description" cols="50" rows="10" wrap="hard" placeholder="Description de l'événement" required></textarea>
+                            </div>
+                            <div class="col-sm-5">
+                                <label for="event_start_date">Date de début</label>
+                                <input type="datetime-local" id="event_start_date" name="event_start_date" value="<?php echo date('Y-m-d\TH:i'); ?>" min="<?php echo date('Y-m-d\TH:i'); ?>" required><br>
+                                <label for="event_end_date">Date de fin</label>
+                                <input type="datetime-local" id="event_end_date" name="event_end_date" value="<?php echo date('Y-m-d\TH:i', strtotime('+1 hour')); ?>" min="<?php echo date('Y-m-d\TH:i'); ?>" required><br>
+                                <button type="submit" style="margin-top: 10%; margin-left: 3%;">Créer événement</button>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </nav>
         </div>
-
         <footer>
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-6" style="border: solid black; padding:2px">
-                        <p style="margin-top:10%;">Bienvenue sur Link dine, le plus grand réseau professionnel mondial comptant plus de 2 utilisateurs dans plus de 0 pays et territoires du monde.</p>
+                        <p style="margin-top:10%;">
+                            Bienvenue sur Link dine, le plus grand réseau professionnel mondial comptant plus de 2 utilisateurs dans plus de 0 pays et territoires du monde.
+                        </p>
                     </div>
                     <div class="col-sm-6" style="border: solid black; padding:2px">
                         <p style="text-align: center;">Nous contacter</p>
-                        <a href="mailto:romain.barriere@edu.ece.fr">Mail</a><br>
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2625.3661096301935!2d2.2859856116549255!3d48.851228701091536!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e6701b4f58251b%3A0x167f5a60fb94aa76!2sECE%20-%20Ecole%20d'ing%C3%A9nieurs%20-%20Engineering%20school.!5e0!3m2!1sfr!2sfr!4v1685461093343!5m2!1sfr!2sfr" width="100" height="100" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <a href="mailto:romain.barriere@edu.ece.fr">Mail</a>
+                        <br>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2625.3661096301935!2d2.285364776180058!3d48.85163477125254!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66fc71e95c48f%3A0xf051be22bd92bb0!2s10%20Rue%20Sextius%20Michel%2C%2075025%20Paris!5e0!3m2!1sfr!2sfr!4v1678898338663!5m2!1sfr!2sfr" width="400" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                 </div>
             </div>
