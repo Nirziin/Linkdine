@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['event_name'])) {
     <nav class="wrapper">
         <?php include 'head.php'; ?>
         <div id="section" style="border:solid">
-            <div id="EventHebdo">
+            <div id="EventHebdo" style= "width: 95%; margin: 0 auto; text-align: center; padding: 20px; background-color: #D3D3D3; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); margin-top: 20px; border-radius: 5px; color: black;">
                 <h3 style="text-align: center; margin:3%; text-decoration:underline;">Evénement de la semaine :</h3>
                 <?php
                 $events_query = "
@@ -112,21 +112,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['event_name'])) {
                 ?>
                 <?php if ($events->num_rows > 0): ?>
                     <?php while($event = $events->fetch_assoc()): ?>
-                        <div class="event">
-                            <p><strong><?php echo htmlspecialchars($event['username']); ?></strong></p>
+                        <div class="event"style ="background-color: #B4BAFF; flex: 4; padding: 5px; box-sizing: border-box; color: black; border-radius: 5px; border: 2px solid #000;">
+                            <h3><strong><?php echo htmlspecialchars($event['username']); ?></strong></h3>
                             <p><?php echo htmlspecialchars($event['name']); ?></p>
                             <p><?php echo htmlspecialchars($event['description']); ?></p>
                             <p>Début: <?php echo htmlspecialchars($event['start_date']); ?></p>
                             <p>Fin: <?php echo htmlspecialchars($event['end_date']); ?></p>
                         </div>
+                        <br>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <p>Aucun événement trouvé.</p>
                 <?php endif; ?>
             </div>
-            <div id="EventPerso">
+            <div id="EventPerso" style= "width: 95%; margin: 0 auto; text-align: center; padding: 20px; background-color: #D3D3D3; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); margin-top: 20px; border-radius: 5px; color: black;">
                 <h3 style="text-align: center; margin:3%; text-decoration:underline;">Fil d'actualité :</h3>
-                <div id="publications">
+                <div id="publications" style = "background-color: #B4BAFF;
+    flex: 4;
+    padding: 5px;
+    box-sizing: border-box;
+    color: black;
+    border-radius: 5px;
+    border: 2px solid #000;">
                     <?php
                     $publications_query = "
                         SELECT p.*, u.username
@@ -146,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['event_name'])) {
                     ?>
                     <?php if ($publications->num_rows > 0): ?>
                         <?php while($publication = $publications->fetch_assoc()): ?>
-                            <div class="publication">
+                            <div class="publication" >
                                 <p><strong><?php echo htmlspecialchars($publication['username']); ?></strong></p>
                                 <p><?php echo htmlspecialchars($publication['description']); ?></p>
                                 <?php if ($publication['image']): ?>

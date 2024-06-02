@@ -1,0 +1,27 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+
+.EventHebdo {
+    width: 95%;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px;
+    background-color: #D3D3D3;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    border-radius: 5px;
+    color: black;
+}
+
+.informations {
+    display: flex;
+    width: 95%;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 20px;
+    border-radius: 5px;
+}

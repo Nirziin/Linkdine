@@ -5,6 +5,7 @@ if (!isset($_SESSION["user_id"])) {
     header("Location: index.html");
     exit();
 }
+include'fond.php';
 
 $servername = "localhost";
 $username = "root";
@@ -12,6 +13,8 @@ $password = "";
 $dbname = "social_network";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
+$user_id = $_SESSION["user_id"];
+$background_color = getUserBackgroundColor($user_id);
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
