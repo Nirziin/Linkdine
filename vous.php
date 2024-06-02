@@ -130,7 +130,7 @@ $conn->close();
                     </form>
                 </div>
                 <div class="col-sm-8">
-                    <div style="background-color: #d6a3b7; margin:2%">
+                    <div style="background-color: #D3D3D3; margin:2%; color: black; border-radius:5px; border:solid 1px">
                         <h1><?php echo htmlspecialchars($prenom) . " " . htmlspecialchars($nom); ?></h1>
                     </div>
                     <div style="background-color: #a7d4d4; margin:2%">
