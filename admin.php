@@ -1,5 +1,6 @@
 <?php
 session_start();
+//test
 
 // Vérifiez si l'utilisateur est connecté et est un administrateur
 if (!isset($_SESSION["user_id"])) {
