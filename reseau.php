@@ -87,12 +87,14 @@ function getImageSrc($image) {
                 <?php if ($result_friends->num_rows > 0): ?>
                     <?php while($row = $result_friends->fetch_assoc()): ?>
                         <div class="profile-item">
-                            <img src="<?php echo getImageSrc($row['image']); ?>" class="profile-picture" alt="<?php echo htmlspecialchars($row['username']); ?>">
+                            <a href="view_profile.php?id=<?php echo $row['id']; ?>">
+                                <img src="<?php echo getImageSrc($row['image']); ?>" class="profile-picture" alt="<?php echo htmlspecialchars($row['username']); ?>">
+                            </a>
                             <h5><?php echo htmlspecialchars($row['username']); ?></h5>
                         </div>
                     <?php endwhile; ?>
                 <?php else: ?>
-                    <p>Vous n'avez pas encore ajouter d'ami.</p>
+                    <p>Vous n'avez pas encore ajouté d'ami.</p>
                 <?php endif; ?>
             </div>
 
@@ -101,7 +103,9 @@ function getImageSrc($image) {
                 <?php if ($result_requests->num_rows > 0): ?>
                     <?php while($row = $result_requests->fetch_assoc()): ?>
                         <div class="profile-item">
-                            <img src="<?php echo getImageSrc($row['image']); ?>" class="profile-picture" alt="<?php echo htmlspecialchars($row['username']); ?>">
+                            <a href="view_profile.php?id=<?php echo $row['id']; ?>">
+                                <img src="<?php echo getImageSrc($row['image']); ?>" class="profile-picture" alt="<?php echo htmlspecialchars($row['username']); ?>">
+                            </a>
                             <h5><?php echo htmlspecialchars($row['username']); ?></h5>
                             <a href='accept_request.php?id=<?php echo $row["id"]; ?>' class='btn btn-success'>Accept</a>
                             <a href='decline_request.php?id=<?php echo $row["id"]; ?>' class='btn btn-danger'>Decline</a>
@@ -112,7 +116,7 @@ function getImageSrc($image) {
                 <?php endif; ?>
             </div>
 
-            <?php include 'add_friend.php';?>
+            <?php include 'add_friend.php'; ?>
         </div>
         <footer>
             <div class="container-fluid">
