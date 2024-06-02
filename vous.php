@@ -113,6 +113,7 @@ $conn->close();
 <body>
     <nav class="wrapper">
         <?php include 'head.php'; ?>
+        <br>
         <nav class="profil">
             <div class="row">
                 <div class="col-sm-4">
@@ -123,8 +124,9 @@ $conn->close();
                         echo '<img src="default-profile.png" alt="Sa photo de profil" width="200">';
                     }
                     ?>
-                    <form method="post" action="" enctype="multipart/form-data">
+                    <form method="post" action="" enctype="multipart/form-data" style="margin-left:10%; background-color:#B3B3B3">
                         <input type="file" id="image_uploads" name="image_uploads" accept=".jpg, .jpeg, .png" onchange="previewImage();" style="display:none">
+                        
                         <button type="button" onclick="document.getElementById('image_uploads').click();">Choisir une photo</button>
                         <button type="submit" id="publish_button">Valider</button>
                     </form>
@@ -133,16 +135,16 @@ $conn->close();
                     <div style="background-color: #D3D3D3; margin:2%; color: black; border-radius:5px; border:solid 1px">
                         <h1><?php echo htmlspecialchars($prenom) . " " . htmlspecialchars($nom); ?></h1>
                     </div>
-                    <div style="background-color: #a7d4d4; margin:2%">
-                        <h3><?php echo nl2br(htmlspecialchars($bio)); ?></h3>
+                    <div style="background-color: #D3D3D3; margin:2%; color: black; border-radius:5px; border:solid 1px">
+                        <h4><?php echo nl2br(htmlspecialchars($bio)); ?></h4>
                     </div>
                 </div>
             </div>
         </nav>
         <!-- Choix du fond par l'utilisateur via des boutons radio -->
-        <nav class="Choix-fond">
-            <h1 style="margin-top : 5%">Choisir son fond</h1>
-            <form method="post" action="">
+        <nav class="Choix-fond" style="width:90%; text-align:center; margin: 0 auto; margin-top:20px; border-radius:5px; background-color:#227871">
+            <h1 style="margin-top : 5%">Couleur de fond</h1>
+            <form method="post" action="" style="width:80%; text-align:center; margin: 0 auto; text-align: center; margin-top: 20px; border-radius: 5px; background-color: #F4F29C; color:black;">
                 <p>Cliquez pour choisir le fond que vous préférez </p>
 
                 <div>
@@ -167,16 +169,17 @@ $conn->close();
 
                 <div>
                     <input type="radio" id="rouge" name="drone" value="#e05a5a" <?php echo $couleur == 4 ? 'checked' : ''; ?>>
-                    <label for="rouge">Fond rouge</label>
+                    <label for="rouge">Fond rose</label>
                 </div>
                 <button type="submit" name="choixFond" id="refresh" value="Fond" style=" margin-top : 2%;">Sélectionner</button>
             </form>
+            <br>
         </nav>
         <br>
         <br>
-        <nav class="Ajout-formation" style="border : solid grey 1px">
+        <nav class="Ajout-formation" >
             <h1 style="margin-top : 5% ">Ajouter une formation</h1>
-            <form method="post" action="">
+            <form method="post" action="" style="background-color:#B9D0FA; color:black;">
                 <div class="row">
                     <div class="col-sm-4">
                         <h5 style="margin-top:15%">Date de début :</h5>
@@ -190,16 +193,16 @@ $conn->close();
                             <h5>Nom de la formation : <input type="text" name="nomFormation" style="margin : 5%" required></h5>
                         </div>
                         <div style="*margin:2%">
-                            <h5 style="margin:2%">Description de la formation : <textarea name="institution" id="Formation-text" rows="10" cols="50" style="margin: 3%;" required></textarea></h5>
+                            <h5 style="margin:2%">Description de la formation : <textarea name="institution" id="Formation-text" rows="10" cols="40" style="margin: 3%;" required></textarea></h5>
                         </div>
                     </div>
                 </div>
-                <button type="submit" name="ajouterForm" value="CreerForm" style=" margin-top : 2%;">Publier</button>
+                <button type="submit" name="ajouterForm" value="CreerForm" style=" margin-top : 2%;">Enregistrer</button>
             </form>
         </nav>
-        <nav class="Ajout-projet" style="border : solid grey 1px">
+        <nav class="Ajout-projet">
             <h1 style="margin-top : 5% ">Ajouter un projet</h1>
-            <form method="post" action="">
+            <form method="post" action="" style="width:95%; text-align:center; margin: 0 auto; text-align: center; margin-top: 20px; border-radius: 5px; background-color: #B9D0FA; color:black;">
                 <div style="margin:2%">
                     <h5>Nom du projet : <input type="text" name="nompjt" style="margin : 5%" required></h5>
                 </div>
