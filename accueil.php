@@ -53,16 +53,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['write'])) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['event_name'])) {
     $event_name = $conn->real_escape_string($_POST['event_name']);
     $event_description = $conn->real_escape_string($_POST['event_description']);
-    $event_start_date = $conn->real_escape_string($_POST['event_start_date']);
-    $event_end_date = $conn->real_escape_string($_POST['event_end_date']);
+    $event_date = $conn->real_escape_string($_POST['event_date']);
+    $event_time = $conn->real_escape_string($_POST['event_time']);
+    $event_lieu = $conn->real_escape_string($_POST['event_lieu']);
 
-    $current_date = date("Y-m-d\TH:i");
-    if ($event_start_date < $current_date) {
-        $event_start_date = $current_date;
-    }
-
-    $stmt = $conn->prepare("INSERT INTO events (name, description, start_date, end_date, user_id) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssi", $event_name, $event_description, $event_start_date, $event_end_date, $user_id);
+    $stmt = $conn->prepare("INSERT INTO evenements (titre, description, date, heure, lieu) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssss", $event_name, $event_description, $event_date, $event_time, $event_lieu);
 
     if ($stmt->execute()) {
         // Redirection après la création de l'événement pour éviter la duplication
@@ -93,11 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['event_name'])) {
                 <h3 style="text-align: center; margin:3%; text-decoration:underline;">Evénement de la semaine :</h3>
                 <?php
                 $events_query = "
-                    SELECT e.*, u.username
-                    FROM events e
-                    JOIN users u ON e.user_id = u.id
-                    WHERE e.start_date <= DATE_ADD(NOW(), INTERVAL 7 DAY) AND e.end_date >= NOW()
-                    ORDER BY e.start_date ASC";
+                    SELECT e.*
+                    FROM evenements e
+                    WHERE e.date <= DATE_ADD(NOW(), INTERVAL 7 DAY) AND e.date >= NOW()
+                    ORDER BY e.date ASC";
 
                 $stmt = $conn->prepare($events_query);
                 $stmt->execute();
@@ -107,11 +102,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['event_name'])) {
                 <?php if ($events->num_rows > 0): ?>
                     <?php while($event = $events->fetch_assoc()): ?>
                         <div class="event">
-                            <p><strong><?php echo htmlspecialchars($event['username']); ?></strong></p>
-                            <p><?php echo htmlspecialchars($event['name']); ?></p>
+                            <p><strong><?php echo htmlspecialchars($event['titre']); ?></strong></p>
                             <p><?php echo htmlspecialchars($event['description']); ?></p>
-                            <p>Début: <?php echo htmlspecialchars($event['start_date']); ?></p>
-                            <p>Fin: <?php echo htmlspecialchars($event['end_date']); ?></p>
+                            <p>Date: <?php echo htmlspecialchars($event['date']); ?></p>
+                            <p>Heure: <?php echo htmlspecialchars($event['heure']); ?></p>
+                            <p>Lieu: <?php echo htmlspecialchars($event['lieu']); ?></p>
                         </div>
                     <?php endwhile; ?>
                 <?php else: ?>
@@ -178,44 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['event_name'])) {
                     </select>
                 </form>
             </nav>
-            <nav class="post" style="border: solid; border: outset; margin: 2px;">
-                <form method="post" action="accueil.php" enctype="multipart/form-data">
-                    <label for="event_name">Créer un événement</label><br>
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-sm-7">
-                                <input type="text" name="event_name" id="event_name" placeholder="Nom de l'événement" required><br>
-                                <textarea name="event_description" id="event_description" cols="50" rows="10" wrap="hard" placeholder="Description de l'événement" required></textarea>
-                            </div>
-                            <div class="col-sm-5">
-                                <label for="event_start_date">Date de début</label>
-                                <input type="datetime-local" id="event_start_date" name="event_start_date" value="<?php echo date('Y-m-d\TH:i'); ?>" min="<?php echo date('Y-m-d\TH:i'); ?>" required><br>
-                                <label for="event_end_date">Date de fin</label>
-                                <input type="datetime-local" id="event_end_date" name="event_end_date" value="<?php echo date('Y-m-d\TH:i', strtotime('+1 hour')); ?>" min="<?php echo date('Y-m-d\TH:i'); ?>" required><br>
-                                <button type="submit" style="margin-top: 10%; margin-left: 3%;">Créer événement</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </nav>
         </div>
-        <footer>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6" style="border: solid black; padding:2px">
-                        <p style="margin-top:10%;">
-                            Bienvenue sur Link dine, le plus grand réseau professionnel mondial comptant plus de 2 utilisateurs dans plus de 0 pays et territoires du monde.
-                        </p>
-                    </div>
-                    <div class="col-sm-6" style="border: solid black; padding:2px">
-                        <p style="text-align: center;">Nous contacter</p>
-                        <a href="mailto:romain.barriere@edu.ece.fr">Mail</a>
-                        <br>
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2625.3661096301935!2d2.285364776180058!3d48.85163477125254!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66fc71e95c48f%3A0xf051be22bd92bb0!2s10%20Rue%20Sextius%20Michel%2C%2075025%20Paris!5e0!3m2!1sfr!2sfr!4v1678898338663!5m2!1sfr!2sfr" width="400" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                    </div>
-                </div>
-            </div>
-        </footer>
     </nav>
 </body>
 </html>

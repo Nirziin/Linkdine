@@ -87,9 +87,6 @@ $conn->close();
           <div style="background-color: #d6a3b7; margin:2%">
             <h1><?php echo htmlspecialchars($prenom) . " " . htmlspecialchars($nom); ?></h1>
           </div>
-          <div style="background-color: #a7d4d4; margin:2%">
-            <h3><?php echo nl2br(htmlspecialchars($bio)); ?></h3>
-          </div>
         </div>
       </div>
     </nav>
