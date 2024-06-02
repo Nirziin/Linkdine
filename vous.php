@@ -62,10 +62,10 @@ $conn->close();
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <link rel="stylesheet" type="text/css" href="global.css">
-  <link rel="stylesheet" type="text/css" href="css/vous.css">
+  <link rel="stylesheet" type="text/css" href="vous.css">
 </head>
 <body>
-  <nav class="wrapper">
+  <nav class="wrapper" style = "background-color:#2C978C">
     <?php include 'head.php'; ?>
     <nav class="profil">
       <div class="row">
@@ -84,7 +84,7 @@ $conn->close();
           </form>
         </div>
         <div class="col-sm-8">
-          <div style="background-color: #d6a3b7; margin:2%">
+          <div style="background-color: #D3D3D3; margin:2%; border-radius:5px; color:black; border: 1px solid #000000">
             <h1><?php echo htmlspecialchars($prenom) . " " . htmlspecialchars($nom); ?></h1>
           </div>
         </div>

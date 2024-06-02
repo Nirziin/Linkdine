@@ -23,7 +23,7 @@
 	}
 ?>
 
-<div id = "header">
+<div id = "header" style = "background-color:#2C978C">
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-sm-8"><h3>ECE-in : Social Media Professionnel de l'ECE Paris</h3></div>
@@ -31,7 +31,7 @@
 		</div>
 	</div>
 </div>
-<div id = "navbar">
+<div id = "navbar" style = "margin-top : 0px;">
 	<ul id="liste1">
 		<li id="accueil"><a href="accueil.php">Accueil</a></li>
 		<li id="reseau"><a href="reseau.php">Mon réseau</a></li>

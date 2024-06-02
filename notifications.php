@@ -70,7 +70,7 @@ mysqli_close($db_handle);
     </script>
 </head>
 <body>
-    <nav class="wrapper">
+    <nav class = "wrapper" style = "background-color:#2C978C">
         <?php include 'head.php'; ?>
         <div class="container">
             <h2>Centre de notifications</h2>

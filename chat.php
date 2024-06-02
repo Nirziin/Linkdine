@@ -43,7 +43,7 @@ session_start();
   <link rel="stylesheet" href="global.css" />
  </head>
  <body>
- <nav class = "wrapper">
+ <nav class = "wrapper" style="background-color: #BCB8FE;">
 	<?php
 		include 'head.php';
 	?>

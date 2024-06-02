@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['event_name'])) {
     <link rel="stylesheet" type="text/css" href="global.css">
 </head>
 <body>
-    <nav class="wrapper">
+    <nav class = "wrapper" style = "background-color:#2C978C">
         <?php include 'head.php'; ?>
         <div id="section" style="border:solid">
             <div id="EventHebdo">
