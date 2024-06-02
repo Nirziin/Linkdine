@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
+    background-color: #f8f9fa; /* Couleur de fond globale */
     margin: 0;
     padding: 0;
 }
@@ -13,7 +13,7 @@ body {
     max-width: 900px;
     margin: auto;
     padding: 20px;
-    background-color: #fff;
+    background-color: #fff; /* Couleur de fond du conteneur */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -24,6 +24,7 @@ h2 {
 .table {
     width: 100%;
     margin-bottom: 20px;
+    border: 1px solid #dee2e6; /* Bordure du tableau */
 }
 
 .table th, .table td {
@@ -31,6 +32,19 @@ h2 {
     text-align: left;
 }
 
+.table th {
+    background-color: #A2A3FF; /* Couleur de fond de l'en-tête */
+    color: #fff; /* Couleur du texte de l'en-tête */
+}
+
+.table td {
+    background-color: #fff; /* Couleur de fond des cellules */
+}
+
 .btn {
     cursor: pointer;
+}
+
+.table tbody tr:nth-child(odd) td {
+    background-color: #f2f2f2; /* Couleur de fond légèrement grise 1 case sur 2 */
 }
