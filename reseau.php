@@ -81,8 +81,8 @@ function getImageSrc($image) {
     <nav class="wrapper">
         <?php include 'head.php'; ?>
         <div class="container">
-            <h2>Welcome, <?php echo $_SESSION["username"]; ?></h2>
-            <h3>Your Friends</h3>
+            <h2>Votre réseau</h2>
+            <h3>Vos amis</h3>
             <div class="profile-container">
                 <?php if ($result_friends->num_rows > 0): ?>
                     <?php while($row = $result_friends->fetch_assoc()): ?>
@@ -92,11 +92,11 @@ function getImageSrc($image) {
                         </div>
                     <?php endwhile; ?>
                 <?php else: ?>
-                    <p>You have no friends.</p>
+                    <p>Vous n'avez pas encore ajouter d'ami.</p>
                 <?php endif; ?>
             </div>
 
-            <h3>Friend Requests</h3>
+            <h3>Vos demandes d'ami</h3>
             <div class="profile-container">
                 <?php if ($result_requests->num_rows > 0): ?>
                     <?php while($row = $result_requests->fetch_assoc()): ?>
@@ -108,7 +108,7 @@ function getImageSrc($image) {
                         </div>
                     <?php endwhile; ?>
                 <?php else: ?>
-                    <p>No friend requests.</p>
+                    <p>Aucune demande d'ami.</p>
                 <?php endif; ?>
             </div>
 
