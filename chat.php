@@ -1,6 +1,11 @@
 <?php
 session_start();
+include 'fond.php';
+$user_id = $_SESSION["user_id"];
+$background_color = getUserBackgroundColor($user_id);
+
  if (isset($_GET['logout'])){
+
 
  //Message de sortie simple
  $logout_message = "<div class='msgln'><span class='left-info'>User <b class='user-name-left'>" .
@@ -34,6 +39,7 @@ session_start();
  </div>';
  }
 ?>
+
 <!DOCTYPE html>
 <html>
  <head>
@@ -41,6 +47,11 @@ session_start();
  <title>Exemple Chat Texto</title>
  <link rel="stylesheet" href="chat.css" />
   <link rel="stylesheet" href="global.css" />
+  <style>
+        body {
+            background-image: <?php echo htmlspecialchars($background_color); ?> !important;
+        }
+    </style>
  </head>
  <body>
  <nav class = "wrapper">

@@ -6,6 +6,11 @@ if (!isset($_SESSION["user_id"])) {
     exit();
 }
 
+include 'fond.php'; // Inclure le fichier fond.php
+
+$user_id = $_SESSION["user_id"];
+$background_color = getUserBackgroundColor($user_id);
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -17,7 +22,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$user_id = $_SESSION["user_id"];
 
 // Récupérer les informations de l'utilisateur
 $sql = "SELECT nom, prenom, bio, image, couleur FROM users WHERE id = ?";
@@ -85,25 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["drone"])) {
     $stmt->close();
 }
 
-// Définir la couleur de fond en fonction de la valeur du champ couleur
-$background_color = 'white';
-switch ($couleur) {
-    case 0:
-        $background_color = 'white';
-        break;
-    case 1:
-        $background_color = 'paleturquoise';
-        break;
-    case 2:
-        $background_color = '#71da88';
-        break;
-    case 3:
-        $background_color = 'burlywood';
-        break;
-    case 4:
-        $background_color = '#e05a5a';
-        break;
-}
+
 
 $conn->close();
 ?>
@@ -120,7 +106,7 @@ $conn->close();
     <link rel="stylesheet" type="text/css" href="vous.css">
     <style>
         body {
-            background-color: <?php echo htmlspecialchars($background_color); ?> !important;
+            background-image: <?php echo htmlspecialchars($background_color); ?> !important;
         }
     </style>
 </head>
@@ -201,10 +187,10 @@ $conn->close();
                     </div>
                     <div class="col-sm-8" >
                         <div style="margin:2%">
-                            <h5>Titre de la formation : <input type="text" name="nom" style="margin : 5%" required> </h5>
+                            <h5>Nom de la formation : <input type="text" name="nomFormation" style="margin : 5%" required></h5>
                         </div>
                         <div style="*margin:2%">
-                            <h5 style="margin:2%">Description de la formation : <textarea name="institution" id="Formation-text" rows="10" cols="50" style="margin: 3%;" required></textarea> </h5>
+                            <h5 style="margin:2%">Description de la formation : <textarea name="institution" id="Formation-text" rows="10" cols="50" style="margin: 3%;" required></textarea></h5>
                         </div>
                     </div>
                 </div>
@@ -212,13 +198,13 @@ $conn->close();
             </form>
         </nav>
         <nav class="Ajout-projet" style="border : solid grey 1px">
-            <h1 style="margin-top : 5% "> Ajouter un projet</h1>
+            <h1 style="margin-top : 5% ">Ajouter un projet</h1>
             <form method="post" action="">
                 <div style="margin:2%">
-                    <h5>Nom du projet : <input type="text" name="nompjt" style="margin : 5%" required> </h5>
+                    <h5>Nom du projet : <input type="text" name="nompjt" style="margin : 5%" required></h5>
                 </div>
                 <div style="margin:2%">
-                    <h5 style="margin:2%"> Description du projet : </h5><textarea name="description" id="Projet-text" rows="10" cols="50" style="margin: 3%;" required></textarea>
+                    <h5 style="margin:2%">Description du projet : </h5><textarea name="description" id="Projet-text" rows="10" cols="50" style="margin: 3%;" required></textarea>
                 </div>
                 <button type="submit" name="ajouterPjt" value="CreerPjt" style=" margin : 2%;">Publier</button>
             </form>
@@ -233,7 +219,7 @@ $conn->close();
                     </div>
                     <div class="col-sm-6" style="border: solid black; padding:2px">
                         <p style="text-align: center;">Nous contacter</p>
-                        <a href="mailto:romain.barriere@edu.ece.fr"> Mail </a>
+                        <a href="mailto:romain.barriere@edu.ece.fr">Mail</a>
                         <br>
                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2625.3661096301935!2d2.2859856116549255!3d48.851228701091536!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e6701b4f58251b%3A0x167f5a60fb94aa76!2sECE%20-%20Ecole%20d&#39;ing%C3%A9nieurs%20-%20Engineering%20school.!5e0!3m2!1sfr!2sfr" width="100" height="100" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>

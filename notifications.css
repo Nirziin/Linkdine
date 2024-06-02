@@ -41,6 +41,22 @@ body {
 
 }
 
+.publication {
+            margin-bottom: 20px;
+        }
+.publication .description {
+            max-height: 50px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+.publication .description.expanded {
+            max-height: none;
+        }
+.read-more {
+            cursor: pointer;
+            color: blue;
+        }
+
 #annonce {
     background-color: #B4BAFF;
     flex: 4;

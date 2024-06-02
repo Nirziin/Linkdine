@@ -5,19 +5,21 @@ if (!isset($_SESSION["user_id"])) {
     header("Location: index.html");
     exit();
 }
+include 'fond.php';
 
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "social_network";
-
 $conn = new mysqli($servername, $username, $password, $dbname);
+$user_id = $_SESSION["user_id"];
+
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$user_id = $_SESSION["user_id"];
+$background_color = getUserBackgroundColor($user_id);
 
 // Requête SQL pour récupérer les amis de l'utilisateur
 $sql_friends = "SELECT u.id, u.username FROM users u 
@@ -37,6 +39,8 @@ $stmt_requests->bind_param("i", $user_id);
 $stmt_requests->execute();
 $result_requests = $stmt_requests->get_result();
 
+
+
 ?>
 
 <!DOCTYPE html>
@@ -49,6 +53,11 @@ $result_requests = $stmt_requests->get_result();
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="emplois.css">
     <link rel="stylesheet" type="text/css" href="global.css">
+    <style>
+        body {
+            background-image: <?php echo htmlspecialchars($background_color); ?> !important;
+        }
+    </style>
 </head>
 <body>
     <nav class = "wrapper">

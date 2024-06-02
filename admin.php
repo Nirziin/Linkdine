@@ -7,11 +7,13 @@ if (!isset($_SESSION["user_id"])) {
     header("Location: index.html");
     exit();
 }
+include 'fond.php';
 
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "social_network";
+$user_id = $_SESSION["user_id"];
 
 // Connexion à la base de données
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -19,6 +21,7 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+$background_color = getUserBackgroundColor($user_id);
 
 // Supprimer temporairement un utilisateur
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_user_id"])) {
@@ -74,6 +77,11 @@ $conn->close();
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="CSSaccueil.css">
     <link rel="stylesheet" type="text/css" href="global.css">
+    <style>
+        body {
+            background-image: <?php echo htmlspecialchars($background_color); ?> !important;
+        }
+    </style>
 </head>
 <body>
     <nav class="wrapper">

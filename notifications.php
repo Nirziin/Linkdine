@@ -6,6 +6,8 @@ if (!isset($_SESSION["user_id"])) {
     exit();
 }
 
+include 'fond.php'; // Inclure le fichier fond.php
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -18,6 +20,8 @@ $user_id = $_SESSION["user_id"];
 if (!$db_found) {
     die("Impossible de se connecter à la base de données: " . mysqli_connect_error());
 }
+
+$background_color = getUserBackgroundColor($user_id);
 
 // Requête SQL pour récupérer les publications non vues
 $sql_publications = "SELECT p.*, u.username FROM publications p JOIN users u ON p.userID = u.id WHERE p.userID != $user_id AND p.date >= ALL (SELECT date FROM publications WHERE userID = $user_id) AND p.date <= NOW()";
@@ -39,23 +43,11 @@ mysqli_close($db_handle);
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="emplois.css">
+    <link rel="stylesheet" type="text/css" href="notifications.css">
     <link rel="stylesheet" type="text/css" href="global.css">
     <style>
-        .publication {
-            margin-bottom: 20px;
-        }
-        .publication .description {
-            max-height: 50px;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-        .publication .description.expanded {
-            max-height: none;
-        }
-        .read-more {
-            cursor: pointer;
-            color: blue;
+        body {
+            background-image: <?php echo htmlspecialchars($background_color); ?> !important;
         }
     </style>
     <script>
