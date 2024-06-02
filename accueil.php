@@ -26,7 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['write'])) {
     $type = 0; // Vous pouvez changer cela si nécessaire
     $likes = 0;
 
-    $image = NULL;
+    $current_date = date("Y-m-d\TH:i");
+    if ($date < $current_date) {
+        $date = $current_date;
+    }
+
+    $image = "";
     if (isset($_FILES['image_uploads']) && $_FILES['image_uploads']['size'] > 0) {
         $image = file_get_contents($_FILES['image_uploads']['tmp_name']);
     }
@@ -45,23 +50,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['write'])) {
     $stmt->close();
 }
 
-// Récupérer les publications des amis et les publications publiques
-$publications_query = "
-    SELECT p.*, u.username AS author_username
-    FROM publications p
-    LEFT JOIN friends f ON p.userID = f.friend_id
-    LEFT JOIN users u ON p.userID = u.id
-    WHERE (p.visibility = 'public' OR (p.visibility = 'friends' AND f.user_id = ?))
-    AND p.userID != ?
-    ORDER BY p.date DESC";
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['event_name'])) {
+    $event_name = $conn->real_escape_string($_POST['event_name']);
+    $event_description = $conn->real_escape_string($_POST['event_description']);
+    $event_start_date = $conn->real_escape_string($_POST['event_start_date']);
+    $event_end_date = $conn->real_escape_string($_POST['event_end_date']);
 
-$stmt = $conn->prepare($publications_query);
-$stmt->bind_param("ii", $user_id, $user_id);
-$stmt->execute();
-$publications = $stmt->get_result();
-$stmt->close();
+    $current_date = date("Y-m-d\TH:i");
+    if ($event_start_date < $current_date) {
+        $event_start_date = $current_date;
+    }
 
-$conn->close();
+    $stmt = $conn->prepare("INSERT INTO events (name, description, start_date, end_date, user_id) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssi", $event_name, $event_description, $event_start_date, $event_end_date, $user_id);
+
+    if ($stmt->execute()) {
+        // Redirection après la création de l'événement pour éviter la duplication
+        header("Location: accueil.php");
+        exit();
+    } else {
+        echo "Erreur: " . $stmt->error;
+    }
+
+    $stmt->close();
+}
 ?>
 
 <!DOCTYPE html>
@@ -79,18 +91,62 @@ $conn->close();
         <div id="section" style="border:solid">
             <div id="EventHebdo">
                 <h3 style="text-align: center; margin:3%; text-decoration:underline;">Evénement de la semaine :</h3>
+                <?php
+                $events_query = "
+                    SELECT e.*, u.username
+                    FROM events e
+                    JOIN users u ON e.user_id = u.id
+                    WHERE e.start_date <= DATE_ADD(NOW(), INTERVAL 7 DAY) AND e.end_date >= NOW()
+                    ORDER BY e.start_date ASC";
+
+                $stmt = $conn->prepare($events_query);
+                $stmt->execute();
+                $events = $stmt->get_result();
+                $stmt->close();
+                ?>
+                <?php if ($events->num_rows > 0): ?>
+                    <?php while($event = $events->fetch_assoc()): ?>
+                        <div class="event">
+                            <p><strong><?php echo htmlspecialchars($event['username']); ?></strong></p>
+                            <p><?php echo htmlspecialchars($event['name']); ?></p>
+                            <p><?php echo htmlspecialchars($event['description']); ?></p>
+                            <p>Début: <?php echo htmlspecialchars($event['start_date']); ?></p>
+                            <p>Fin: <?php echo htmlspecialchars($event['end_date']); ?></p>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <p>Aucun événement trouvé.</p>
+                <?php endif; ?>
             </div>
             <div id="EventPerso">
                 <h3 style="text-align: center; margin:3%; text-decoration:underline;">Fil d'actualité :</h3>
                 <div id="publications">
+                    <?php
+                    $publications_query = "
+                        SELECT p.*, u.username
+                        FROM publications p
+                        LEFT JOIN friends f ON p.userID = f.friend_id
+                        JOIN users u ON p.userID = u.id
+                        WHERE ((p.visibility = 'public' AND p.userID != ?) OR (p.visibility = 'friends' AND f.user_id = ?))
+                        AND p.date <= NOW()
+                        ORDER BY p.date DESC";
+
+                    $stmt = $conn->prepare($publications_query);
+                    $stmt->bind_param("ii", $user_id, $user_id);
+                    $stmt->execute();
+                    $publications = $stmt->get_result();
+                    $stmt->close();
+                    $conn->close();
+                    ?>
                     <?php if ($publications->num_rows > 0): ?>
                         <?php while($publication = $publications->fetch_assoc()): ?>
                             <div class="publication">
+                                <p><strong><?php echo htmlspecialchars($publication['username']); ?></strong></p>
                                 <p><?php echo htmlspecialchars($publication['description']); ?></p>
                                 <?php if ($publication['image']): ?>
                                     <img src="data:image/jpeg;base64,<?php echo base64_encode($publication['image']); ?>" alt="Publication Image" width="200">
                                 <?php endif; ?>
-                                <p>Posté par <?php echo htmlspecialchars($publication['author_username']); ?> le: <?php echo htmlspecialchars($publication['date']); ?></p>
+                                <p>Posté le: <?php echo htmlspecialchars($publication['date']); ?></p>
                             </div>
                         <?php endwhile; ?>
                     <?php else: ?>
@@ -114,12 +170,32 @@ $conn->close();
                         </div>
                     </div>
                     <label for="start">Quand ?</label>
-                    <input type="datetime-local" id="date" name="date" value="2023-03-22" min="2015-01-01" max="2026-12-31" style="text-align: left">
+                    <input type="datetime-local" id="date" name="date" value="<?php echo date('Y-m-d\TH:i'); ?>" min="<?php echo date('Y-m-d\TH:i'); ?>" style="text-align: left">
                     <label for="visibility">Visibilité :</label>
                     <select id="visibility" name="visibility">
                         <option value="public">Tout le monde</option>
                         <option value="friends">Amis uniquement</option>
                     </select>
+                </form>
+            </nav>
+            <nav class="post" style="border: solid; border: outset; margin: 2px;">
+                <form method="post" action="accueil.php" enctype="multipart/form-data">
+                    <label for="event_name">Créer un événement</label><br>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-7">
+                                <input type="text" name="event_name" id="event_name" placeholder="Nom de l'événement" required><br>
+                                <textarea name="event_description" id="event_description" cols="50" rows="10" wrap="hard" placeholder="Description de l'événement" required></textarea>
+                            </div>
+                            <div class="col-sm-5">
+                                <label for="event_start_date">Date de début</label>
+                                <input type="datetime-local" id="event_start_date" name="event_start_date" value="<?php echo date('Y-m-d\TH:i'); ?>" min="<?php echo date('Y-m-d\TH:i'); ?>" required><br>
+                                <label for="event_end_date">Date de fin</label>
+                                <input type="datetime-local" id="event_end_date" name="event_end_date" value="<?php echo date('Y-m-d\TH:i', strtotime('+1 hour')); ?>" min="<?php echo date('Y-m-d\TH:i'); ?>" required><br>
+                                <button type="submit" style="margin-top: 10%; margin-left: 3%;">Créer événement</button>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </nav>
         </div>
