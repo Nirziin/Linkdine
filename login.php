@@ -22,6 +22,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
+        
+        if ($row["status"] === "inactive") {
+            // Rediriger l'utilisateur vers la page de connexion avec un message d'erreur
+            header("Location: index.html?error=inactive_account");
+            exit();
+        }
+        
         if (password_verify($password, $row["password"])) {
             $_SESSION["user_id"] = $row["id"];
             $_SESSION["username"] = $row["username"];
